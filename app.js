@@ -7,6 +7,8 @@ var fileUpload = require('express-fileupload');
 var indexRouter = require('./routes/index');
 var app = express();
 var AdmZip = require('adm-zip');
+var fs = require('fs');
+const fsExtra = require('fs-extra');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,14 +29,20 @@ app.post('/uploadzip', async (req, res) => {
   try {
       if(req.files) {
         let zipfile = req.files.zipfile;
-        zipfile.mv(zipfile.name, function(err) {   //callback to ensure the download finishes before continuing.
+        zipfile.mv("download/" + zipfile.name, function(err) {   //callback to ensure the download finishes before continuing.
           if (err) return res.status(500).json(err);
 
           //unzip the contents
           unzip(req, res);
 
+          //validate json, escape if false
+          if (validate(res) == false){
+            return;
+          };     
           
           //parse output
+
+          removeDownloads();
 
           apiReply(res, {
             message: 'success!',
@@ -54,13 +62,32 @@ app.post('/uploadzip', async (req, res) => {
 
 function unzip(){
 	// extract the archives using the unzip module to local folder
-	let zip = new AdmZip("Default Sample File.zip");
+	let zip = new AdmZip("download/Default Sample File.zip");
   zip.extractAllTo("./extracted/",true);
 }
 
+function validate(res){
+  //easy cheat to see if the json can parse/is valid
+  try {
+    JSON.parse(JSON.stringify(require('./extracted/article.json')));
+    JSON.parse(JSON.stringify(require('./extracted/metadata.json')));
+    return true;
+  }
+  catch (err){
+    apiReply(res, {
+      message: 'failure! Corrupt json recieved: ' + err,
+    });
+    return false;
+  }
+}
 
 function apiReply(res, replyResponse){
   res.send(replyResponse);
+}
+
+function removeDownloads(){ //removes the old packages for future tests
+  fs.unlinkSync("./download/Default Sample File.zip");
+  fsExtra.emptyDirSync("./extracted");
 }
 
 // catch 404 and forward to error handler
