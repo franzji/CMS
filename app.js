@@ -30,8 +30,14 @@ app.post('/uploadzip', async (req, res) => {
       if(req.files) {
         let zipfile = req.files.zipfile;
         zipfile.mv("download/" + zipfile.name, function(err) {   //callback to ensure the download finishes before continuing.
-          if (err) return res.status(500).json(err);
-
+          
+          if (zipfile.name != "Default Sample File.zip"){
+            fs.unlinkSync("./download/" + zipfile.name);
+            apiReply(res, {
+              message: 'failure! Incorrect zip file sent',
+            })
+            return;
+          }
           //unzip the contents
           unzip(req, res);
 
@@ -41,12 +47,12 @@ app.post('/uploadzip', async (req, res) => {
           };     
           
           //parse output
+          generateJSON(res);
 
+          //remove old data
           removeDownloads();
 
-          apiReply(res, {
-            message: 'success!',
-          })
+
         });
       } else {
         apiReply(res, {
@@ -60,18 +66,64 @@ app.post('/uploadzip', async (req, res) => {
   }
 });
 
+function generateJSON(res){
+  let metadata = require('./extracted/metadata.json')
+  let article = require('./extracted/article.json')
+
+  let CMSoutput = {element : []};
+  let jsondata = {};
+
+
+  article.data.content.forEach(function(part){       //loop for each element in the article
+    if('title' in part.content){         //select out elements
+      jsondata.title = part.content.title;
+      jsondata.identifier = part.identifier;      
+      CMSoutput.element.push(jsondata);                //push to the end of the array
+    }
+    else if('text' in part.content){
+      jsondata.text = part.content.text;
+      jsondata.identifier = part.identifier;
+      CMSoutput.element.push(jsondata);
+    }
+    else if('subtitle' in part.content){
+      jsondata.subtitle = part.content.subtitle;
+      jsondata.identifier = part.identifier;
+      CMSoutput.element.push(jsondata);
+    }
+    else if('image' in part.content){
+      jsondata.image = part.content.image;
+      jsondata.identifier = part.identifier;
+      CMSoutput.element.push(jsondata);
+    }
+    else if('html' in part.content){
+      jsondata.html = part.content.html;
+      jsondata.identifier = part.identifier;
+      CMSoutput.element.push(jsondata);
+    }
+    jsondata = {};
+  });
+
+//send back result!
+apiReply(res, {
+  message: 'success!',
+  data: CMSoutput,
+});
+}
+
+
+
+
+// extract the archives using the unzip module to local folder
 function unzip(){
-	// extract the archives using the unzip module to local folder
 	let zip = new AdmZip("download/Default Sample File.zip");
   zip.extractAllTo("./extracted/",true);
 }
 
+//easy cheat to see if the json can parse/is valid
 function validate(res){
-  //easy cheat to see if the json can parse/is valid
   try {
     JSON.parse(JSON.stringify(require('./extracted/article.json')));
     JSON.parse(JSON.stringify(require('./extracted/metadata.json')));
-    return true;
   }
   catch (err){
     apiReply(res, {
@@ -79,13 +131,16 @@ function validate(res){
     });
     return false;
   }
+  return true;
 }
 
+//reply to user
 function apiReply(res, replyResponse){
   res.send(replyResponse);
 }
 
-function removeDownloads(){ //removes the old packages for future tests
+//removes the old packages for future tests
+function removeDownloads(){
   fs.unlinkSync("./download/Default Sample File.zip");
   fsExtra.emptyDirSync("./extracted");
 }
@@ -94,6 +149,7 @@ function removeDownloads(){ //removes the old packages for future tests
 app.use(function(req, res, next) {
     next(createError(404));
 });
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
