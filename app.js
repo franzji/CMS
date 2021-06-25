@@ -30,7 +30,6 @@ app.post('/uploadzip', async (req, res) => {
       if(req.files) {
         let zipfile = req.files.zipfile;
         zipfile.mv("download/" + zipfile.name, function(err) {   //callback to ensure the download finishes before continuing.
-          
           if (zipfile.name != "Default Sample File.zip"){
             fs.unlinkSync("./download/" + zipfile.name);
             apiReply(res, {
@@ -51,8 +50,6 @@ app.post('/uploadzip', async (req, res) => {
 
           //remove old data
           removeDownloads();
-
-
         });
       } else {
         apiReply(res, {
@@ -70,48 +67,56 @@ function generateJSON(res){
   let metadata = require('./extracted/metadata.json')
   let article = require('./extracted/article.json')
 
-  let CMSoutput = {element : []};
-  let jsondata = {};
+  let CMSoutput = {metadata:{}, element : []};
+  let jsonData= {};
 
-
+  //do basic metadata first
+  if('ID' in metadata.MetaData.BasicMetaData){
+    CMSoutput.metadata.id = metadata.MetaData.BasicMetaData.ID;
+  }
+  if ('Name' in metadata.MetaData.BasicMetaData){
+    CMSoutput.metadata.name = metadata.MetaData.BasicMetaData.Name;
+  }
+  if('Type' in metadata.MetaData.BasicMetaData){
+    CMSoutput.metadata.type = metadata.MetaData.BasicMetaData.Type;
+  }
+  if('Format' in metadata.MetaData.ContentMetaData){
+    CMSoutput.metadata.format = metadata.MetaData.ContentMetaData.Format;
+  }
   article.data.content.forEach(function(part){       //loop for each element in the article
     if('title' in part.content){         //select out elements
-      jsondata.title = part.content.title;
-      jsondata.identifier = part.identifier;      
-      CMSoutput.element.push(jsondata);                //push to the end of the array
+      jsonData.title = part.content.title;
+      jsonData.identifier = part.identifier;      
+      CMSoutput.element.push(jsonData);                //push to the end of the array
     }
     else if('text' in part.content){
-      jsondata.text = part.content.text;
-      jsondata.identifier = part.identifier;
-      CMSoutput.element.push(jsondata);
+      jsonData.text = part.content.text;
+      jsonData.identifier = part.identifier;
+      CMSoutput.element.push(jsonData);
     }
     else if('subtitle' in part.content){
-      jsondata.subtitle = part.content.subtitle;
-      jsondata.identifier = part.identifier;
-      CMSoutput.element.push(jsondata);
+      jsonData.subtitle = part.content.subtitle;
+      jsonData.identifier = part.identifier;
+      CMSoutput.element.push(jsonData);
     }
     else if('image' in part.content){
-      jsondata.image = part.content.image;
-      jsondata.identifier = part.identifier;
-      CMSoutput.element.push(jsondata);
+      jsonData.image = part.content.image;
+      jsonData.identifier = part.identifier;
+      CMSoutput.element.push(jsonData);
     }
     else if('html' in part.content){
-      jsondata.html = part.content.html;
-      jsondata.identifier = part.identifier;
-      CMSoutput.element.push(jsondata);
+      jsonData.html = part.content.html;
+      jsonData.identifier = part.identifier;
+      CMSoutput.element.push(jsonData);
     }
-    jsondata = {};
+    jsonData = {};
   });
-
 //send back result!
 apiReply(res, {
   message: 'success!',
   data: CMSoutput,
 });
 }
-
-
-
 
 // extract the archives using the unzip module to local folder
 function unzip(){
@@ -155,7 +160,6 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
   // render the error page
   res.status(err.status || 500);
   res.render('error');
