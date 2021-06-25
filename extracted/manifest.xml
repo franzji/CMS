@@ -1,0 +1,20 @@
+<manifest dateModified="2020-09-14T18:20:20Z" targetViewer="33.0.0" version="3.0.0">
+  <index href="output.html" type="text/html"/>
+  <resources>
+    <resource href="article.json" length="6478" md5="NjUzZGUyMzQwN2I5NmI4MTkwMTg1YWExNTM5NTc4YmU=" type="application/json"/>
+    <resource href="img/33.jpeg" length="1054024" md5="MDZlMzIwM2Q1OWQ3YjIxMzgwODc0NjBhNjI1ZDNhZjk=" type="image/jpeg"/>
+    <resource href="img/34.jpeg" length="580437" md5="ZGIxNTJiNGUxZTM4MWQ1NTFjNjM3MmRkNzUyMDAwZWM=" type="image/jpeg"/>
+    <resource href="img/35.jpeg" length="819108" md5="NGJjNjAxMGE2ZTQwZmVlZDRjODYwODVlNWVlMGNiZjA=" type="image/jpeg"/>
+    <resource href="img/36.jpeg" length="478515" md5="OGIwMDQ3ZDllNzI4OGY5YmE1ZTMxOGQ5YTY3NmYwNjI=" type="image/jpeg"/>
+    <resource href="img/37.jpeg" length="1054024" md5="MDZlMzIwM2Q1OWQ3YjIxMzgwODc0NjBhNjI1ZDNhZjk=" type="image/jpeg"/>
+    <resource href="metadata.json" length="7992" md5="OTk4Yzc3MGVkYjlmYjRkZGQ3MTg5NDhmZjIwZTIzZTI=" type="application/json"/>
+    <resource href="output.html" length="10049" md5="ODVlNzI0ODgxMWY2MTBkMTFhNmMxYzkzZTAzMDEzMTc=" type="text/html"/>
+    <resource href="output.psv" length="11155" md5="Y2U2ODBiZjJmZWI4NTk0MGZkODM4MDQ0MWI2NGY1NWE=" type="false"/>
+    <resource href="template/506c8d84fb9c43c89e1f768b92cc1b99.js" length="181874" md5="NTA2YzhkODRmYjljNDNjODllMWY3NjhiOTJjYzFiOTk=" type="application/javascript"/>
+    <resource href="template/design.css" length="28817" md5="MjAwZjFjNGRiZGI1YzRmYzcxNDE0MzczMTIyMDUzMTA=" type="text/css"/>
+    <resource href="template/img/slideshow-down-arrow.svg" length="744" md5="OWFjMTk2YzA4ZGZjNmJlNzA2MzViZmYwMTE1NjdjYjk=" type="image/svg+xml"/>
+    <resource href="template/img/slideshow-left-arrow.svg" length="737" md5="MzhmMTk3NjY4Y2U5NjM2ZTA0NGZjNzY1M2ViNzMyNTk=" type="image/svg+xml"/>
+    <resource href="template/img/slideshow-right-arrow.svg" length="745" md5="MDI3MTc3MGU3M2M1YTUzZGQwYjNlMWQzMzBjMmRmNDY=" type="image/svg+xml"/>
+    <resource href="template/img/slideshow-up-arrow.svg" length="741" md5="YTMyYzIxN2MzNDk5NjI0M2JiMmNlYzI4YjhmNjgyYTQ=" type="image/svg+xml"/>
+  </resources>
+</manifest>
